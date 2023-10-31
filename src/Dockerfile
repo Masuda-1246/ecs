@@ -3,11 +3,12 @@ FROM golang:latest AS build
 
 WORKDIR /src
 
-COPY . ./
+COPY go.mod ./
+COPY go.sum ./
 
-RUN go mod init example
+RUN go mod download
 
-RUN go mod tidy
+COPY . .
 
 # バイナリをビルド
 RUN CGO_ENABLED=0 go build -o main main.go
@@ -17,6 +18,7 @@ FROM alpine:latest
 
 # ビルドステージからバイナリのみをコピー
 COPY --from=build /src/main /app/main
+
 
 # コンテナ内の作業ディレクトリを設定
 WORKDIR /app
