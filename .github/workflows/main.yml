@@ -3,6 +3,10 @@ name: ecr push image
 on:
   push:
 
+defaults:
+  run:
+    shell: bash
+
 permissions:
   id-token: write
   contents: read
@@ -18,7 +22,17 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout.
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: AWS Configure Credentials.
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          role-session-name: githubActionsAession
 
       - name: AWS Configure Credentials.
         uses: aws-actions/configure-aws-credentials@v1-node16
