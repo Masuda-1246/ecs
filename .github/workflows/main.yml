@@ -34,15 +34,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
           role-session-name: githubActionsAession
 
-      - name: AWS Configure Credentials.
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-          role-session-name: githubActionsAession
-
       # NOTE: ECR Public の場合は `with.registry-type: public` を指定する
-      - uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
         id: login-ecr
         # with:
         #   registry-type: public
@@ -51,7 +45,7 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: h4b-ecs-helloworld
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: 0.0.1
         run: |
           cd src
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
