@@ -3,6 +3,14 @@ name: ecr push image
 on:
   push:
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+  AWSWEB_IDENTITY_TOKEN_FILE: /tmp/awscreds
+
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -12,10 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: aws-actions/configure-aws-credentials@v1
+      - name: AWS Configure Credentials.
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: ap-northeast-1
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }} # GitHub Actions 用の IAM ロールの ARN
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          role-session-name: githubActionsAession
 
       # NOTE: ECR Public の場合は `with.registry-type: public` を指定する
       - uses: aws-actions/amazon-ecr-login@v1
