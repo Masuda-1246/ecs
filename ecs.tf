@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "main" {
   [
     {
         "name": "${local.container_name}",
-        "image": "${aws_ecr_repository.main.repository_url}:0.0.1",
+        "image": "${aws_ecr_repository.main.repository_url}:latest",
         "cpu": 0,
         "portMappings": [
             {
